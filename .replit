@@ -1,0 +1,48 @@
+modules = ["python-3.12", "web"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+packages = ["cacert"]
+
+[userenv]
+
+[userenv.shared]
+PORT = "5000"
+BIND_ADDRESS = "0.0.0.0"
+FQDN = "5a21221b-6234-4bdb-83f4-2fb05566ef03-00-32buoql3itnqy.pike.replit.dev"
+HAS_SSL = "1"
+NO_PORT = "1"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -m FileStream"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8080
+externalPort = 8080

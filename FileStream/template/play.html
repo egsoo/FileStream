@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>{{file_name}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #000000;
+      --s1:        #0a0a0a;
+      --s2:        #111111;
+      --s3:        #1a1a1a;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.12);
+      --text:      #ffffff;
+      --muted:     #555555;
+      --muted2:    #888888;
+      --p1:        #7c3aed;
+      --p2:        #6366f1;
+      --p3:        #a78bfa;
+      --grad:      linear-gradient(135deg, #7c3aed, #6366f1, #a78bfa);
+      --glow:      0 0 40px rgba(124,58,237,0.25);
+      --r:         16px;
+      --r-sm:      10px;
+    }
+
+    html { background: var(--bg); scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ──────────────────── HEADER ──────────────────── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .logo {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #22c55e;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.3px;
+    }
+
+    .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: blink 1.6s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
+    }
+
+    /* ──────────────────── LAYOUT ──────────────────── */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ──────────────────── PLAYER CARD ──────────────────── */
+    .player-wrap {
+      border-radius: var(--r);
+      overflow: hidden;
+      background: #000;
+      border: 1px solid var(--border);
+      box-shadow: var(--glow), 0 24px 64px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .player-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: calc(var(--r) + 1px);
+      padding: 1px;
+      background: var(--grad);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .video-box { background: #000; width: 100%; }
+    .video-box video { width: 100%; display: block; max-height: 55vw; }
+
+    /* ──────────────────── PLYR THEME ──────────────────── */
+    .plyr {
+      --plyr-color-main:                    #7c3aed;
+      --plyr-range-fill-background:         #7c3aed;
+      --plyr-video-control-background-hover: rgba(124,58,237,0.3);
+      --plyr-video-controls-background:     linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.9));
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Seek bar on own row */
+    .plyr__controls {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      align-items: center !important;
+      padding: 0 10px 10px !important;
+      gap: 0 !important;
+    }
+    .plyr--video .plyr__controls {
+      padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    }
+    .plyr__progress__container {
+      flex: 0 0 100% !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      order: -999 !important;
+      padding: 8px 0 6px !important;
+    }
+
+    /* Seek thumb & track */
+    .plyr__progress input[type=range] {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      height: 4px !important;
+      cursor: pointer !important;
+    }
+    .plyr__progress input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none !important;
+      width: 14px !important; height: 14px !important;
+      border-radius: 50% !important;
+      background: #a78bfa !important;
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.3) !important;
+      border: none !important;
+    }
+    .plyr__progress input[type=range]::-moz-range-thumb {
+      width: 14px !important; height: 14px !important;
+      border-radius: 50% !important;
+      background: #a78bfa !important;
+      border: none !important;
+    }
+
+    .plyr__control { padding: 8px !important; }
+
+    @media (max-width: 540px) {
+      .video-box video { max-height: none; }
+      .plyr__volume { display: flex !important; min-width: 0 !important; }
+      .plyr__volume input[type=range] { width: 50px !important; }
+      .plyr__progress input[type=range] { height: 5px !important; }
+      .plyr__progress input[type=range]::-webkit-slider-thumb {
+        width: 18px !important; height: 18px !important;
+      }
+    }
+
+    /* ──────────────────── INFO CARD ──────────────────── */
+    .info-card {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+    }
+
+    .file-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-word;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--muted2);
+      background: var(--s2);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .chip svg { flex-shrink: 0; }
+
+    /* ──────────────────── ACTION BUTTONS ──────────────────── */
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 22px;
+      border-radius: var(--r-sm);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+      letter-spacing: 0.1px;
+      flex: 1;
+      justify-content: center;
+    }
+    .btn:active { transform: scale(0.95); }
+
+    .btn-primary {
+      background: var(--grad);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 28px rgba(124,58,237,0.55); filter: brightness(1.08); }
+
+    .btn-ghost {
+      background: var(--s2);
+      color: var(--text);
+      border: 1px solid var(--border2);
+    }
+    .btn-ghost:hover { background: var(--s3); border-color: rgba(255,255,255,0.18); }
+
+    /* ──────────────────── EXTERNAL PLAYERS ──────────────────── */
+    .ext-card {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px 20px;
+    }
+
+    .ext-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 12px;
+    }
+
+    .ext-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ext-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted2);
+      background: var(--s2);
+      border: 1px solid var(--border);
+      padding: 9px 16px;
+      border-radius: var(--r-sm);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .ext-btn:hover { color: var(--text); border-color: var(--border2); background: var(--s3); }
+    .ext-btn:active { transform: scale(0.95); }
+
+    /* ──────────────────── TOAST ──────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: var(--s3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      pointer-events: none;
+      transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), opacity 0.25s;
+      opacity: 0;
+      z-index: 9999;
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* ──────────────────── FOOTER ──────────────────── */
+    footer {
+      text-align: center;
+      padding: 20px 16px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--p3); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 540px) {
+      main { padding: 12px 10px 32px; gap: 10px; }
+      .info-card, .ext-card { padding: 14px; }
+      .btn { padding: 11px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="logo">FileStream</span>
+    <span class="live-badge"><span class="live-dot"></span>Streaming</span>
+  </header>
+
+  <main>
+
+    <!-- Player -->
+    <div class="player-wrap">
+      <div class="video-box">
+        <video id="player" playsinline controls preload="metadata">
+          <source src="{{file_url}}" type="video/mp4"/>
+        </video>
+      </div>
+    </div>
+
+    <!-- File info -->
+    <div class="info-card">
+      <div class="file-name">{{file_name}}</div>
+      <div class="chips">
+        <span class="chip">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          {{file_size}}
+        </span>
+        <span class="chip">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+          </svg>
+          Video
+        </span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <a class="btn btn-primary" href="{{file_url}}" download>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </a>
+      <button class="btn btn-ghost" onclick="copyLink()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        Copy Link
+      </button>
+    </div>
+
+    <!-- External players -->
+    <div class="ext-card">
+      <div class="ext-label">Open in External Player</div>
+      <div class="ext-row">
+        <a class="ext-btn" href="vlc://{{file_url}}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+          </svg>
+          VLC
+        </a>
+        <a class="ext-btn" href="intent:{{file_url}}#Intent;package=com.mxtech.videoplayer.ad;end">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+          </svg>
+          MX Player
+        </a>
+        <a class="ext-btn" href="nplayer-{{file_url}}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+          </svg>
+          nPlayer
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    Powered by <a href="https://telegram.org" target="_blank">Telegram</a> · FileStream Bot
+  </footer>
+
+  <div class="toast" id="toast">✓ Link copied</div>
+
+  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <script>
+    const player = new Plyr('#player', {
+      controls: [
+        'play-large','rewind','play','fast-forward',
+        'progress','current-time','duration',
+        'mute','volume','settings','pip','fullscreen'
+      ],
+      speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] },
+      seekTime: 10,
+      tooltips: { controls: false, seek: true },
+      keyboard: { focused: true, global: true },
+    });
+
+    /* Seek bar: physically move to first child */
+    function hoistProgress() {
+      const ctrl = document.querySelector('.plyr__controls');
+      const prog = ctrl && ctrl.querySelector('.plyr__progress__container');
+      if (ctrl && prog && ctrl.firstChild !== prog) {
+        ctrl.insertBefore(prog, ctrl.firstChild);
+        Object.assign(prog.style, {
+          flex: '0 0 100%', width: '100%', maxWidth: '100%',
+          padding: '8px 0 6px', order: '-999'
+        });
+      }
+    }
+    player.on('ready', hoistProgress);
+    player.on('statechange', hoistProgress);
+
+    /* Fullscreen → landscape */
+    player.on('enterfullscreen', () => {
+      try { screen.orientation.lock('landscape').catch(()=>{}); } catch(e) {}
+      try { screen.lockOrientation && screen.lockOrientation('landscape'); } catch(e) {}
+    });
+    player.on('exitfullscreen', () => {
+      try { screen.orientation.unlock(); } catch(e) {}
+      try { screen.unlockOrientation && screen.unlockOrientation(); } catch(e) {}
+    });
+
+    /* Copy link */
+    function copyLink() {
+      const url = window.location.href;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => toast('✓ Link copied'));
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = url; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta); toast('✓ Link copied');
+      }
+    }
+
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2400);
+    }
+  </script>
+</body>
+</html>
